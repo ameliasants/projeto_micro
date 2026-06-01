@@ -2,70 +2,108 @@
 
 Este repositório contém o firmware, os códigos de teste e a documentação do projeto de Sistemas Embarcados desenvolvido para a disciplina de Sistemas Microcontrolados na Universidade Federal do Ceará (UFC) - Campus Quixadá.
 
-O objetivo do projeto é controlar o acionamento de um motor DC (Cooler) remotamente através de comandos seriais via Bluetooth. O grande diferencial desta aplicação é a utilização de **interrupções de hardware puro (Bare-Metal)**, garantindo que o processador não desperdice tempo em laços de espera e fique livre para o processamento de outras tarefas.
+O objetivo do projeto é controlar o acionamento de um motor DC (Cooler) remotamente através de comandos seriais via Bluetooth. O grande diferencial desta aplicação é a utilização de **interrupções de hardware puro (Bare-Metal)**, garantindo que o processador não desperdice tempo em laços de espera e fique livre para o processamento de outras tarefas simultâneas.
+
+---
+
+## 📑 Índice
+1. [Estrutura do Repositório](#-estrutura-do-repositório-metodologia)
+2. [Pré-requisitos de Software](#-pré-requisitos-de-software)
+3. [Plataforma e Hardware](#️-plataforma-e-componentes-de-hardware)
+4. [Arquitetura de Software](#-arquitetura-de-software-e-funcionamento)
+5. [Mapeamento de Pinos (Pinout)](#-diagrama-de-ligações-e-pinout)
+6. [Guia de Teste via Celular](#-guia-de-configuração-do-celular)
+7. [Referências Documentais](#-referências-documentais)
+
+---
 
 ## 📁 Estrutura do Repositório (Metodologia)
 
-O desenvolvimento seguiu a prática de Prototipagem Rápida, sendo dividido em duas etapas que se encontram em pastas separadas neste repositório:
+O desenvolvimento seguiu a prática de **Prototipagem Rápida (PoC)**, dividindo o fluxo de trabalho em duas etapas claras:
 
-* 📂 **`1_Versao_Teste/`**: Nossa Prova de Conceito (PoC). Esta versão inicial utiliza o STM32CubeMX e a biblioteca **HAL (Hardware Abstraction Layer)**. Foi utilizada exclusivamente para validar rapidamente as ligações elétricas (Protoboard, ST-Link, Relé e HC-05) antes da escrita do código de baixo nível.
-* 📂 **`2_Projeto_Final/`**: Versão oficial e definitiva. A dependência da biblioteca HAL foi removida. O acionamento, o temporizador (SysTick) e a leitura serial operam 100% via **Bare-Metal**, manipulando diretamente os registradores (`BSRR`, `CR1`, `CRL`, etc.) para atingir a máxima performance e cumprir os requisitos técnicos da arquitetura ARM.
+* 📂 **`1_Versao_Teste/`**: Nossa Prova de Conceito. Esta versão inicial utiliza o STM32CubeMX e a biblioteca **HAL (Hardware Abstraction Layer)**. Foi utilizada exclusivamente para validar rapidamente as ligações elétricas físicas na bancada antes da escrita do código de baixo nível.
+* 📂 **`2_Projeto_Final/`**: Versão oficial e definitiva de entrega. A dependência da biblioteca HAL foi removida. O acionamento, o temporizador (SysTick) e a leitura serial operam 100% via **Bare-Metal**, manipulando diretamente os registradores para atingir a máxima performance exigida pela arquitetura ARM Cortex-M.
+
+---
 
 ## 💻 Pré-requisitos de Software
 
-Para compilar, modificar ou gravar este projeto na placa, você precisará ter instalado em sua máquina:
+Para compilar, modificar ou gravar este projeto na placa, o ambiente de desenvolvimento requer:
 * **STM32CubeIDE:** Ambiente de desenvolvimento oficial da STMicroelectronics.
-* **Drivers ST-Link:** Para que o computador reconheça o gravador USB (ST-Link V2).
+* **Drivers ST-Link V2:** Para o reconhecimento do gravador USB pelo sistema operacional.
+
+---
 
 ## 🛠️ Plataforma e Componentes de Hardware
 
-O sistema foi arquitetado em torno do núcleo ARM Cortex-M3. Foram utilizados os seguintes hardwares e ferramentas:
+O hardware foi projetado para garantir o isolamento entre o circuito de controle (baixa potência) e o circuito de atuação (alta potência):
 
-* **Microcontrolador:** Placa STM32F103C8T6 (Bluepill)
-* **Comunicação:** Módulo Bluetooth HC-05 (Baud rate: 9600 bps)
-* **Atuador de Potência:** Módulo Relé Eletromecânico de 1 Canal (5V)
-* **Carga:** Cooler DC
-* **Gravação e Debug:** ST-Link V2
-* **Esquemático:** Diagrama lógico desenhado via EasyEDA
+* **Microcontrolador:** Placa de Desenvolvimento STM32F103C8T6 (Bluepill - ARM Cortex-M3)
+* **Comunicação:** Módulo Bluetooth HC-05 (Configurado para *Baud rate: 9600 bps*)
+* **Atuador de Potência:** Módulo Relé Eletromecânico 1 Canal (5V)
+* **Carga DC:** Cooler
+* **Ferramenta de Gravação:** ST-Link V2
+
+---
 
 ## 🧠 Arquitetura de Software e Funcionamento
 
-A lógica foi desenhada para ser não-bloqueante e orientada a eventos:
+A lógica de controle foi desenhada para ser estritamente **não-bloqueante** e orientada a eventos. 
 
-1. O celular, através de um terminal Bluetooth, envia os caracteres ASCII `'Y'` (Yes/Ligar) ou `'N'` (No/Desligar).
-2. O laço principal do microcontrolador (`while(1)`) permanece completamente vazio, mantendo a CPU em repouso.
+1. O celular, através de um terminal Bluetooth, transmite os caracteres ASCII `'Y'` (Yes/Ligar) ou `'N'` (No/Desligar).
+2. O laço principal do microcontrolador (`while(1)`) permanece completamente vazio, mantendo a CPU em estado de repouso ou livre para rotinas futuras.
 3. Ao receber um dado via ar, o módulo HC-05 aciona o pino RX da STM32, o que dispara instantaneamente a interrupção de hardware **`RXNEIE`** (RX Not Empty Interrupt Enable).
-4. A rotina de interrupção (`USART1_IRQHandler`) lê o caractere recebido e altera os bits de *Set* ou *Reset* do registrador `GPIOA->BSRR`, atracando ou soltando o relé em um único ciclo de máquina.
+4. A rotina de interrupção altera o registrador `GPIOA->BSRR` em **um único ciclo de máquina**.
 
-## 🔌 Diagrama de Ligações (Pinagem)
+> **Exemplo do Acionamento Bare-Metal (Trecho do Código):**
+> ```c
+> ```
 
-*(Dica: Insira a imagem do esquemático exportado do EasyEDA aqui)*
+---
+
+## 🔌 Diagrama de Ligações e Pinout
+
+Para garantir a replicação exata do projeto, o circuito foi documentado esquematicamente.
+
+*(Insira a imagem do esquemático exportado do EasyEDA aqui)*
 ![Esquemático de Ligações do Sistema](link_para_sua_imagem_aqui.png)
 
-* **HC-05:** Pino TX conectado ao `PA10` (RX) | Pino RX conectado ao `PA9` (TX)
-* **Relé:** Pino de controle (IN) conectado ao `PA5`
-* **ST-Link:** SWDIO no `PA13` | SWCLK no `PA14`
+### Tabela de Mapeamento
 
-## 📱 Guia de Configuração do Celular (Passo a Passo)
+| Componente | Pino do Módulo | Pino STM32 (Bluepill) | Função / Registrador Alvo |
+| :--- | :--- | :--- | :--- |
+| **HC-05** | `TX` | `PA10` | RX (Recepção Serial via USART1) |
+| **HC-05** | `RX` | `PA9` | TX (Transmissão Serial via USART1) |
+| **Relé** | `IN` (Sinal) | `PA5` | Saída Digital Push-Pull (`GPIOA->BSRR`) |
+| **ST-Link**| `SWDIO` | `PA13` | Interface de Debug |
+| **ST-Link**| `SWCLK` | `PA14` | Clock de Debug |
 
-Para enviar os comandos remotos para a placa, você precisará de um aplicativo de terminal serial. Recomendamos o **Serial Bluetooth Terminal** (disponível na Google Play).
+---
 
-1. Alimente a placa STM32 e o módulo HC-05 (o LED vermelho do módulo começará a piscar rápido, indicando modo de pareamento).
-2. No celular, vá em *Configurações > Bluetooth* e pareie com o dispositivo **HC-05** (A senha padrão geralmente é `1234` ou `0000`).
-3. Abra o aplicativo *Serial Bluetooth Terminal*, vá na aba `Devices`, selecione o HC-05 e clique no ícone de conectar.
-4. No terminal de mensagens, digite os seguintes comandos de controle:
-   * **`Y`** (Maiúsculo) e envie: O microcontrolador processa a interrupção, o relé atraca e o cooler liga.
-   * **`N`** (Maiúsculo) e envie: O microcontrolador processa a interrupção, o relé solta o contato e o cooler desliga.
+## 📱 Guia de Configuração do Celular
+
+Para enviar os comandos remotos para a placa, utilize um aplicativo de terminal serial, como o **Serial Bluetooth Terminal** (Google Play).
+
+1. Alimente o sistema (o LED do HC-05 piscará rapidamente, aguardando pareamento).
+2. No menu Bluetooth do celular, pareie com o dispositivo **HC-05** (Senha padrão: `1234` ou `0000`).
+3. Abra o aplicativo *Serial Bluetooth Terminal*, acesse a aba `Devices`, selecione o HC-05 e conecte.
+4. No terminal, envie os seguintes comandos:
+   * **`Y`** (Maiúsculo): A interrupção processa o dado, atracando o relé e ligando o cooler.
+   * **`N`** (Maiúsculo): A interrupção corta o sinal, soltando o contato e desligando o motor.
+
+---
 
 ## 📚 Referências Documentais
 
-Para o desenvolvimento em Bare-Metal e o correto mapeamento da arquitetura, consultamos as seguintes documentações técnicas oficiais:
-* [Reference Manual RM0008 (STMicroelectronics)](https://www.st.com/resource/en/reference_manual/rm0008-stm32f101xx-stm32f102xx-stm32f103xx-stm32f105xx-and-stm32f107xx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf): Utilizado como base principal para mapear os registradores de Clock (RCC), GPIO (CRL/CRH, BSRR) e USART (CR1, DR).
+Para garantir o rigor técnico do código em Bare-Metal, as configurações basearam-se nas seguintes documentações oficiais da fabricante:
+* [Reference Manual RM0008 (STMicroelectronics)](https://www.st.com/resource/en/reference_manual/rm0008-stm32f101xx-stm32f102xx-stm32f103xx-stm32f105xx-and-stm32f107xx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf): Mapeamento dos registradores de Clock (RCC), GPIO (CRL/CRH, BSRR) e USART (CR1, DR).
 * Datasheet Técnico do Módulo Bluetooth HC-05.
 * Datasheet do Relé Eletromecânico Songle SRD-05VDC-SL-C.
 
-## 👥 Equipe Desenvolvedora
+---
 
+## 👥 Equipe Desenvolvedora
+Desenvolvido com dedicação por:
 * Ana Alicy Ribeiro dos Santos
 * Ana Amélia
 * Cícero Rodrigues
