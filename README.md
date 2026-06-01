@@ -1,4 +1,4 @@
-# ⚡ Controle de Carga DC via Bluetooth com STM32
+#  Controle de Carga DC via Bluetooth com STM32
 
 Este repositório contém o firmware, os códigos de teste e a documentação do projeto de Sistemas Embarcados desenvolvido para a disciplina de Sistemas Microcontrolados na Universidade Federal do Ceará (UFC) - Campus Quixadá.
 
@@ -6,7 +6,7 @@ O objetivo do projeto é controlar o acionamento de um motor DC (Cooler) remotam
 
 ---
 
-## 📑 Índice
+##  Índice
 1. [Estrutura do Repositório](#-estrutura-do-repositório-metodologia)
 2. [Pré-requisitos de Software](#-pré-requisitos-de-software)
 3. [Plataforma e Hardware](#️-plataforma-e-componentes-de-hardware)
@@ -17,16 +17,16 @@ O objetivo do projeto é controlar o acionamento de um motor DC (Cooler) remotam
 
 ---
 
-## 📁 Estrutura do Repositório (Metodologia)
+##  Estrutura do Repositório (Metodologia)
 
 O desenvolvimento seguiu a prática de **Prototipagem Rápida (PoC)**, dividindo o fluxo de trabalho em duas etapas claras:
 
-* 📂 **`1_Versao_Teste/`**: Nossa Prova de Conceito. Esta versão inicial utiliza o STM32CubeMX e a biblioteca **HAL (Hardware Abstraction Layer)**. Foi utilizada exclusivamente para validar rapidamente as ligações elétricas físicas na bancada antes da escrita do código de baixo nível.
-* 📂 **`2_Projeto_Final/`**: Versão oficial e definitiva de entrega. A dependência da biblioteca HAL foi removida. O acionamento, o temporizador (SysTick) e a leitura serial operam 100% via **Bare-Metal**, manipulando diretamente os registradores para atingir a máxima performance exigida pela arquitetura ARM Cortex-M.
+*  **`1_Versao_Teste/`**: Nossa Prova de Conceito. Esta versão inicial utiliza o STM32CubeMX e a biblioteca **HAL (Hardware Abstraction Layer)**. Foi utilizada exclusivamente para validar rapidamente as ligações elétricas físicas na bancada antes da escrita do código de baixo nível.
+*  **`2_Projeto_Final/`**: Versão oficial e definitiva de entrega. A dependência da biblioteca HAL foi removida. O acionamento, o temporizador (SysTick) e a leitura serial operam 100% via **Bare-Metal**, manipulando diretamente os registradores para atingir a máxima performance exigida pela arquitetura ARM Cortex-M.
 
 ---
 
-## 💻 Pré-requisitos de Software
+##  Pré-requisitos de Software
 
 Para compilar, modificar ou gravar este projeto na placa, o ambiente de desenvolvimento requer:
 * **STM32CubeIDE:** Ambiente de desenvolvimento oficial da STMicroelectronics.
@@ -34,7 +34,7 @@ Para compilar, modificar ou gravar este projeto na placa, o ambiente de desenvol
 
 ---
 
-## 🛠️ Plataforma e Componentes de Hardware
+##  Plataforma e Componentes de Hardware
 
 O hardware foi projetado para garantir o isolamento entre o circuito de controle (baixa potência) e o circuito de atuação (alta potência):
 
@@ -46,7 +46,7 @@ O hardware foi projetado para garantir o isolamento entre o circuito de controle
 
 ---
 
-## 🧠 Arquitetura de Software e Funcionamento
+##  Arquitetura de Software e Funcionamento
 
 A lógica de controle foi desenhada para ser estritamente **não-bloqueante** e orientada a eventos. 
 
@@ -61,7 +61,7 @@ A lógica de controle foi desenhada para ser estritamente **não-bloqueante** e 
 
 ---
 
-## 🔌 Diagrama de Ligações e Pinout
+##  Diagrama de Ligações e Pinout
 
 Para garantir a replicação exata do projeto, o circuito foi documentado esquematicamente.
 
@@ -80,7 +80,7 @@ Para garantir a replicação exata do projeto, o circuito foi documentado esquem
 
 ---
 
-## 📱 Guia de Configuração do Celular
+##  Guia de Configuração do Celular
 
 Para enviar os comandos remotos para a placa, utilize um aplicativo de terminal serial, como o **Serial Bluetooth Terminal** (Google Play).
 
@@ -93,7 +93,7 @@ Para enviar os comandos remotos para a placa, utilize um aplicativo de terminal 
 
 ---
 
-## 📚 Referências Documentais
+##  Referências Documentais
 
 Para garantir o rigor técnico do código em Bare-Metal, as configurações basearam-se nas seguintes documentações oficiais da fabricante:
 * [Reference Manual RM0008 (STMicroelectronics)](https://www.st.com/resource/en/reference_manual/rm0008-stm32f101xx-stm32f102xx-stm32f103xx-stm32f105xx-and-stm32f107xx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf): Mapeamento dos registradores de Clock (RCC), GPIO (CRL/CRH, BSRR) e USART (CR1, DR).
@@ -102,7 +102,7 @@ Para garantir o rigor técnico do código em Bare-Metal, as configurações base
 
 ---
 
-## 👥 Equipe Desenvolvedora
+##  Equipe Desenvolvedora
 Desenvolvido com dedicação por:
 * Ana Alicy Ribeiro dos Santos
 * Ana Amélia
