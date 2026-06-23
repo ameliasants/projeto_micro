@@ -6,23 +6,36 @@ O objetivo do projeto é controlar o acionamento de um motor DC (Cooler) remotam
 
 ---
 
-##  Índice
-1. [Estrutura do Repositório](#-estrutura-do-repositório-metodologia)
-2. [Pré-requisitos de Software](#-pré-requisitos-de-software)
-3. [Plataforma e Hardware](#️-plataforma-e-componentes-de-hardware)
-4. [Arquitetura de Software](#-arquitetura-de-software-e-funcionamento)
-5. [Mapeamento de Pinos (Pinout)](#-diagrama-de-ligações-e-pinout)
-6. [Guia de Teste via Celular](#-guia-de-configuração-do-celular)
-7. [Referências Documentais](#-referências-documentais)
-
----
-
-##  Estrutura do Repositório (Metodologia)
+## Estrutura do Repositório (Metodologia)
 
 O desenvolvimento seguiu a prática de **Prototipagem Rápida (PoC)**, dividindo o fluxo de trabalho em duas etapas claras:
 
-*  **`1_Versao_Teste/`**: Nossa Prova de Conceito. Esta versão inicial utiliza o STM32CubeMX e a biblioteca **HAL (Hardware Abstraction Layer)**. Foi utilizada exclusivamente para validar rapidamente as ligações elétricas físicas na bancada antes da escrita do código de baixo nível.
-*  **`2_Projeto_Final/`**: Versão oficial e definitiva de entrega. A dependência da biblioteca HAL foi removida. O acionamento, o temporizador (SysTick) e a leitura serial operam 100% via **Bare-Metal**, manipulando diretamente os registradores para atingir a máxima performance exigida pela arquitetura ARM Cortex-M.
+* **`1_Versao_Teste/`**: Nossa Prova de Conceito. Esta versão inicial utiliza o STM32CubeMX e a biblioteca **HAL (Hardware Abstraction Layer)**. Foi utilizada exclusivamente para validar rapidamente as ligações elétricas físicas na bancada antes da escrita do código de baixo nível.
+
+* **`2_Projeto_Final/`**: Versão oficial e definitiva de entrega. A dependência da biblioteca HAL foi removida. O acionamento, o temporizador (SysTick) e a leitura serial operam 100% via **Bare-Metal**, manipulando diretamente os registradores para atingir a máxima performance exigida pela arquitetura ARM Cortex-M.
+
+
+```
+2_Projeto_Final/
+├── Core/
+├── Drivers/
+├── Relatorio/
+│   └── Relatorio_Final.pdf
+├── Esquematico/
+│   ├── Projeto_EasyEDA.pdf
+│   └── Projeto_EasyEDA.png
+└── README.md
+```
+
+### Documentação do Projeto
+
+Toda a documentação complementar encontra-se disponível na pasta `2_Projeto_Final`:
+
+*  **Relatório Técnico:** [Relatorio_Final.pdf](./2_Projeto_Final/Relatorio/Relatorio_Final.pdf)
+
+*  **Esquemático Elétrico (PDF):** [Projeto_EasyEDA.pdf](./2_Projeto_Final/Esquematico/Projeto_EasyEDA.pdf)
+
+*  **Imagem do Esquemático:** [Projeto_EasyEDA.png](./2_Projeto_Final/Esquematico/Projeto_EasyEDA.png)
 
 ---
 
@@ -55,41 +68,26 @@ A lógica de controle foi desenhada para ser estritamente **não-bloqueante** e 
 3. Ao receber um dado via ar, o módulo HC-05 aciona o pino RX da STM32, o que dispara instantaneamente a interrupção de hardware **`RXNEIE`** (RX Not Empty Interrupt Enable).
 4. A rotina de interrupção altera o registrador `GPIOA->BSRR` em **um único ciclo de máquina**.
 
-> **Exemplo do Acionamento Bare-Metal (Trecho do Código):**
-> ```c
-> ```
-
 ---
 
-##  Diagrama de Ligações e Pinout
+## Diagrama de Ligações e Pinout
 
-Para garantir a replicação exata do projeto, o circuito foi documentado esquematicamente.
+O esquemático completo do sistema encontra-se disponível na pasta:
 
-*(Insira a imagem do esquemático exportado do EasyEDA aqui)*
-![Esquemático de Ligações do Sistema](link_para_sua_imagem_aqui.png)
+ `2_Projeto_Final/Esquematico/`
 
-### Tabela de Mapeamento
+- [Visualizar Esquemático (PDF)](./2_Projeto_Final/Esquematico/Projeto_EasyEDA.pdf)
+- [Visualizar Esquemático (Imagem)](./2_Projeto_Final/Esquematico/Projeto_EasyEDA.png)
 
-| Componente | Pino do Módulo | Pino STM32 (Bluepill) | Função / Registrador Alvo |
-| :--- | :--- | :--- | :--- |
-| **HC-05** | `TX` | `PA10` | RX (Recepção Serial via USART1) |
-| **HC-05** | `RX` | `PA9` | TX (Transmissão Serial via USART1) |
-| **Relé** | `IN` (Sinal) | `PA5` | Saída Digital Push-Pull (`GPIOA->BSRR`) |
-| **ST-Link**| `SWDIO` | `PA13` | Interface de Debug |
-| **ST-Link**| `SWCLK` | `PA14` | Clock de Debug |
+![Esquemático de Ligações do Sistema](./2_Projeto_Final/Esquematico/Projeto_EasyEDA.png)
+
+
 
 ---
 
 ##  Guia de Configuração do Celular
 
-Para enviar os comandos remotos para a placa, utilize um aplicativo de terminal serial, como o **Serial Bluetooth Terminal** (Google Play).
-
-1. Alimente o sistema (o LED do HC-05 piscará rapidamente, aguardando pareamento).
-2. No menu Bluetooth do celular, pareie com o dispositivo **HC-05** (Senha padrão: `1234` ou `0000`).
-3. Abra o aplicativo *Serial Bluetooth Terminal*, acesse a aba `Devices`, selecione o HC-05 e conecte.
-4. No terminal, envie os seguintes comandos:
-   * **`Y`** (Maiúsculo): A interrupção processa o dado, atracando o relé e ligando o cooler.
-   * **`N`** (Maiúsculo): A interrupção corta o sinal, soltando o contato e desligando o motor.
+Adcionar após finalização da aplicação
 
 ---
 
@@ -104,6 +102,6 @@ Para garantir o rigor técnico do código em Bare-Metal, as configurações base
 
 ##  Equipe Desenvolvedora
 Desenvolvido com dedicação por:
-* Ana Alicy Ribeiro dos Santos
-* Ana Amélia
-* Cícero Rodrigues
+* [Ana Alicy Ribeiro](https://github.com/AlicyRibeiro)
+* [Ana Amélia](https://github.com/ameliasants)
+* [Cícero Rodrigues](https://github.com/Icxxz)
