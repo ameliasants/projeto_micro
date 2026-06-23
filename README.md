@@ -91,6 +91,18 @@ Adcionar após finalização da aplicação
 
 ---
 
+## Demonstração
+
+### Sistema Montado
+
+![Montagem](imagens/montagem.jpg)
+
+### Funcionamento
+
+![Funcionamento](imagens/funcionamento.gif)
+
+---
+
 ##  Referências Documentais
 
 Para garantir o rigor técnico do código em Bare-Metal, as configurações basearam-se nas seguintes documentações oficiais da fabricante:
