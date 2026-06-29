@@ -1,8 +1,8 @@
 #  Controle de Carga DC via Bluetooth com STM32
 
-Este repositório contém o firmware, os códigos de teste e a documentação do projeto de Sistemas Embarcados desenvolvido para a disciplina de Sistemas Microcontrolados na Universidade Federal do Ceará (UFC) - Campus Quixadá.
+Este repositório contém o firmware, os códigos de teste e a documentação do projeto de Sistemas Embarcados desenvolvido para a disciplina de Microcontroladores na Universidade Federal do Ceará (UFC) - Campus Quixadá.
 
-O objetivo do projeto é controlar o acionamento de um motor DC (Cooler) remotamente através de comandos seriais via Bluetooth. O grande diferencial desta aplicação é a utilização de **interrupções de hardware puro (Bare-Metal)**, garantindo que o processador não desperdice tempo em laços de espera e fique livre para o processamento de outras tarefas simultâneas.
+O objetivo do projeto é controlar o acionamento de um motor DC  remotamente através de comandos seriais via Bluetooth. O grande diferencial desta aplicação é a utilização de **interrupções de hardware puro (Bare-Metal)**, garantindo que o processador não desperdice tempo em laços de espera e fique livre para o processamento de outras tarefas simultâneas.
 
 ---
 
