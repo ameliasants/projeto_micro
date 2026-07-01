@@ -10,13 +10,13 @@
 
 O desenvolvimento seguiu a prática de **Prototipagem Rápida (PoC)**, dividindo o fluxo de trabalho em duas etapas claras.
 
-### 📁 `1_Versao_Teste/`
+###  `1_Versao_Teste/`
 
 Nossa Prova de Conceito.
 
 Esta versão inicial utiliza o STM32CubeMX e a biblioteca **HAL (Hardware Abstraction Layer)**. Foi utilizada exclusivamente para validar rapidamente as ligações elétricas físicas na bancada antes da escrita do código de baixo nível.
 
-### 📁 `2_Projeto_Final/`
+###  `2_Projeto_Final/`
 
 Versão oficial e definitiva de entrega.
 
@@ -42,9 +42,9 @@ Toda a documentação complementar encontra-se disponível na pasta **`Documento
 
 | Documento | Arquivo |
 |-----------|----------|
-| 📄 Relatório Técnico | [Relatorio_Final.pdf](./2_Projeto_Final/Relatorio/Relatorio_Final.pdf) |
-| 📘 Esquemático Elétrico (PDF) | [Projeto_esquematico.pdf](./2_Projeto_Final/Esquematico/Projeto_esquematico.pdf) |
-| 🖼️ Imagem do Esquemático | [Projeto_esquematico.png](./2_Projeto_Final/Esquematico/Projeto_esquematico.png) |
+|  Relatório Técnico | [Relatorio_Final.pdf](./2_Projeto_Final/Relatorio/Relatorio_Final.pdf) |
+|  Esquemático Elétrico (PDF) | [Projeto_esquematico.pdf](./2_Projeto_Final/Esquematico/Projeto_esquematico.pdf) |
+|  Imagem do Esquemático | [Projeto_esquematico.png](./2_Projeto_Final/Esquematico/Projeto_esquematico.png) |
 
 ---
 
