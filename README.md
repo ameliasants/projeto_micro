@@ -21,21 +21,21 @@ O desenvolvimento seguiu a prática de **Prototipagem Rápida (PoC)**, dividindo
 ├── Drivers/
 ├── Relatorio/
 │   └── Relatorio_Final.pdf
-├── Esquematico/
-│   ├── Projeto_EasyEDA.pdf
-│   └── Projeto_EasyEDA.png
+├── Documentos/
+│   ├── Projeto_esquematico.pdf
+│   └── Projeto_esquematico.png
 └── README.md
 ```
 
 ### Documentação do Projeto
 
-Toda a documentação complementar encontra-se disponível na pasta `2_Projeto_Final`:
+Toda a documentação complementar encontra-se disponível na pasta `Documentos`:
 
 *  **Relatório Técnico:** [Relatorio_Final.pdf](./2_Projeto_Final/Relatorio/Relatorio_Final.pdf)
 
-*  **Esquemático Elétrico (PDF):** [Projeto_EasyEDA.pdf](./2_Projeto_Final/Esquematico/Projeto_EasyEDA.pdf)
+*  **Esquemático Elétrico (PDF):** [Projeto_esquematico.pdf](./2_Projeto_Final/Esquematico/Projeto_esquematico.pdf)
 
-*  **Imagem do Esquemático:** [Projeto_EasyEDA.png](./2_Projeto_Final/Esquematico/Projeto_EasyEDA.png)
+*  **Imagem do Esquemático:** [Projeto_esquematico.png](./2_Projeto_Final/Esquematico/Projeto_esquematico.png)
 
 ---
 
@@ -67,21 +67,6 @@ A lógica de controle foi desenhada para ser estritamente **não-bloqueante** e 
 2. O laço principal do microcontrolador (`while(1)`) permanece completamente vazio, mantendo a CPU em estado de repouso ou livre para rotinas futuras.
 3. Ao receber um dado via ar, o módulo HC-05 aciona o pino RX da STM32, o que dispara instantaneamente a interrupção de hardware **`RXNEIE`** (RX Not Empty Interrupt Enable).
 4. A rotina de interrupção altera o registrador `GPIOA->BSRR` em **um único ciclo de máquina**.
-
----
-
-## Diagrama de Ligações e Pinout
-
-O esquemático completo do sistema encontra-se disponível na pasta:
-
- `2_Projeto_Final/Esquematico/`
-
-- [Visualizar Esquemático (PDF)](./2_Projeto_Final/Esquematico/Projeto_EasyEDA.pdf)
-- [Visualizar Esquemático (Imagem)](./2_Projeto_Final/Esquematico/Projeto_EasyEDA.png)
-
-![Esquemático de Ligações do Sistema](./2_Projeto_Final/Esquematico/Projeto_EasyEDA.png)
-
-
 
 ---
 
