@@ -1,21 +1,28 @@
-#  Controle de Carga DC via Bluetooth com STM32
+# Controle de Carga DC via Bluetooth com STM32
 
-Este repositório contém o firmware, os códigos de teste e a documentação do projeto de Sistemas Embarcados desenvolvido para a disciplina de Microcontroladores na Universidade Federal do Ceará (UFC) - Campus Quixadá.
-
-O objetivo do projeto é controlar o acionamento de um motor DC  remotamente através de comandos seriais via Bluetooth. O grande diferencial desta aplicação é a utilização de **interrupções de hardware puro (Bare-Metal)**, garantindo que o processador não desperdice tempo em laços de espera e fique livre para o processamento de outras tarefas simultâneas.
+> Este repositório contém o firmware, os códigos de teste e a documentação do projeto de Sistemas Embarcados desenvolvido para a disciplina de Microcontroladores na Universidade Federal do Ceará (UFC) - Campus Quixadá.
+>
+> O objetivo do projeto é controlar o acionamento de um motor DC remotamente através de comandos seriais via Bluetooth. O grande diferencial desta aplicação é a utilização de **interrupções de hardware puro (Bare-Metal)**, garantindo que o processador não desperdice tempo em laços de espera e fique livre para o processamento de outras tarefas simultâneas.
 
 ---
 
 ## Estrutura do Repositório
 
-O desenvolvimento seguiu a prática de **Prototipagem Rápida (PoC)**, dividindo o fluxo de trabalho em duas etapas claras:
+O desenvolvimento seguiu a prática de **Prototipagem Rápida (PoC)**, dividindo o fluxo de trabalho em duas etapas claras.
 
-* **`1_Versao_Teste/`**: Nossa Prova de Conceito. Esta versão inicial utiliza o STM32CubeMX e a biblioteca **HAL (Hardware Abstraction Layer)**. Foi utilizada exclusivamente para validar rapidamente as ligações elétricas físicas na bancada antes da escrita do código de baixo nível.
+### 📁 `1_Versao_Teste/`
 
-* **`2_Projeto_Final/`**: Versão oficial e definitiva de entrega. A dependência da biblioteca HAL foi removida. O acionamento, o temporizador (SysTick) e a leitura serial operam 100% via **Bare-Metal**, manipulando diretamente os registradores para atingir a máxima performance exigida pela arquitetura ARM Cortex-M.
+Nossa Prova de Conceito.
 
+Esta versão inicial utiliza o STM32CubeMX e a biblioteca **HAL (Hardware Abstraction Layer)**. Foi utilizada exclusivamente para validar rapidamente as ligações elétricas físicas na bancada antes da escrita do código de baixo nível.
 
-```
+### 📁 `2_Projeto_Final/`
+
+Versão oficial e definitiva de entrega.
+
+A dependência da biblioteca HAL foi removida. O acionamento, o temporizador (SysTick) e a leitura serial operam **100% via Bare-Metal**, manipulando diretamente os registradores para atingir a máxima performance exigida pela arquitetura ARM Cortex-M.
+
+```text
 2_Projeto_Final/
 ├── Core/
 ├── Drivers/
@@ -27,102 +34,176 @@ O desenvolvimento seguiu a prática de **Prototipagem Rápida (PoC)**, dividindo
 └── README.md
 ```
 
-### Documentação do Projeto
+---
 
-Toda a documentação complementar encontra-se disponível na pasta `Documentos`:
+##  Documentação do Projeto
 
-*  **Relatório Técnico:** [Relatorio_Final.pdf](./2_Projeto_Final/Relatorio/Relatorio_Final.pdf)
+Toda a documentação complementar encontra-se disponível na pasta **`Documentos`**.
 
-*  **Esquemático Elétrico (PDF):** [Projeto_esquematico.pdf](./2_Projeto_Final/Esquematico/Projeto_esquematico.pdf)
-
-*  **Imagem do Esquemático:** [Projeto_esquematico.png](./2_Projeto_Final/Esquematico/Projeto_esquematico.png)
+| Documento | Arquivo |
+|-----------|----------|
+| 📄 Relatório Técnico | [Relatorio_Final.pdf](./2_Projeto_Final/Relatorio/Relatorio_Final.pdf) |
+| 📘 Esquemático Elétrico (PDF) | [Projeto_esquematico.pdf](./2_Projeto_Final/Esquematico/Projeto_esquematico.pdf) |
+| 🖼️ Imagem do Esquemático | [Projeto_esquematico.png](./2_Projeto_Final/Esquematico/Projeto_esquematico.png) |
 
 ---
 
 ##  Pré-requisitos de Software
 
 Para compilar, modificar ou gravar este projeto na placa, o ambiente de desenvolvimento requer:
-* **STM32CubeIDE:** Ambiente de desenvolvimento oficial da STMicroelectronics.
-* **Drivers ST-Link V2:** Para o reconhecimento do gravador USB pelo sistema operacional.
+
+| Software | Finalidade |
+|----------|------------|
+| **STM32CubeIDE** | Ambiente de desenvolvimento oficial da STMicroelectronics |
+| **Drivers ST-Link V2** | Reconhecimento do gravador USB pelo sistema operacional |
 
 ---
 
 ##  Plataforma e Componentes de Hardware
 
-O hardware foi projetado para garantir o isolamento entre o circuito de controle (baixa potência) e o circuito de atuação (alta potência):
+O hardware foi projetado para garantir o isolamento entre o circuito de controle (baixa potência) e o circuito de atuação (alta potência).
 
-* **Microcontrolador:** Placa de Desenvolvimento STM32F103C8T6 (Bluepill - ARM Cortex-M3)
-* **Comunicação:** Módulo Bluetooth HC-05 (Configurado para *Baud rate: 9600 bps*)
-* **Atuador de Potência:** Módulo Relé Eletromecânico 1 Canal (5V)
-* **Carga DC:** Cooler
-* **Ferramenta de Gravação:** ST-Link V2
+| Componente | Descrição |
+|------------|-----------|
+| **Microcontrolador** | Placa de Desenvolvimento STM32F103C8T6 (Bluepill - ARM Cortex-M3) |
+| **Comunicação** | Módulo Bluetooth HC-05 (Configurado para *Baud rate: 9600 bps*) |
+| **Atuador de Potência** | Módulo Relé Eletromecânico 1 Canal (5V) |
+| **Carga DC** | Cooler |
+| **Ferramenta de Gravação** | ST-Link V2 |
 
 ---
 
 ##  Arquitetura de Software e Funcionamento
 
-A lógica de controle foi desenhada para ser estritamente **não-bloqueante** e orientada a eventos. 
+A lógica de controle foi desenhada para ser estritamente **não-bloqueante** e orientada a eventos.
+
+```text
+Celular
+   │
+   ▼
+Bluetooth HC-05
+   │
+USART1 RX
+   │
+Interrupção RXNEIE
+   │
+Rotina de Interrupção
+   │
+GPIOA->BSRR
+   │
+Relé
+   │
+Motor DC
+```
+
+Fluxo de execução:
 
 1. O celular, através de um terminal Bluetooth, transmite os caracteres ASCII `'Y'` (Yes/Ligar) ou `'N'` (No/Desligar).
+
 2. O laço principal do microcontrolador (`while(1)`) permanece completamente vazio, mantendo a CPU em estado de repouso ou livre para rotinas futuras.
+
 3. Ao receber um dado via ar, o módulo HC-05 aciona o pino RX da STM32, o que dispara instantaneamente a interrupção de hardware **`RXNEIE`** (RX Not Empty Interrupt Enable).
+
 4. A rotina de interrupção altera o registrador `GPIOA->BSRR` em **um único ciclo de máquina**.
 
 ---
 
-## Aplicativo de Controle e Monitoramento (Dashboard)
+##  Aplicativo de Controle e Monitoramento (Dashboard)
 
-Para a interação com o sistema, foi desenvolvido um aplicativo Android customizado utilizando a plataforma MIT App Inventor. A interface foi projetada com foco em usabilidade e clareza visual (estilo Dark Mode), atuando como um painel de controle industrial para operação remota.
+Para a interação com o sistema, foi desenvolvido um aplicativo Android customizado utilizando a plataforma MIT App Inventor.
 
-- Funcionalidades da Interface
-- Controle de Atuação: Botões dedicados para envio de comandos seriais. O botão "Ligar" transmite o caractere 'Y' (Yes - acionando o relé) e o botão "Desligar" transmite o caractere 'N' (No).
-- Monitoramento em Tempo Real: O aplicativo possui uma rotina de buffer serial que recebe e trata as strings enviadas pela STM32. Ele busca especificamente pelo identificador "Corrente:", faz o fatiamento da string (split) e exibe o consumo em miliamperes (mA) no painel central.
-- Sistema de Segurança (Timeout): O app monitora ativamente a comunicação. Caso a placa pare de enviar os dados por mais de 2.5 segundos, o aplicativo acusa "Conexão Perdida" e zera a exibição, prevenindo que o usuário visualize leituras obsoletas.
+A interface foi projetada com foco em usabilidade e clareza visual (estilo Dark Mode), atuando como um painel de controle industrial para operação remota.
 
-Guia de Instalação e Uso
-1. Instale o arquivo executável .apk no seu smartphone Android.
-2. Nas configurações de Bluetooth do celular, realize o pareamento prévio com o módulo HC-05 (a senha padrão de fábrica geralmente é 1234 ou 0000).
-3. Abra o aplicativo, clique no botão de seleção Bluetooth e escolha o módulo na lista de dispositivos pareados.
-4. Aguarde a validação do endereço MAC e o status de "Conectado" para iniciar a operação.
+## Funcionalidades da Interface
 
+###  Controle de Atuação
 
-Demonstração
-Sistema Montado
+Botões dedicados para envio de comandos seriais.
 
-(Adicione aqui a foto da sua montagem física)
-Interface do Aplicativo
-
-(Adicione aqui o print da tela do seu App)
-Funcionamento (GIF)
-
-(Se possível, adicione um GIF curto mostrando o valor mudando ao ligar a carga)
-
+O botão **"Ligar"** transmite o caractere `'Y'` (Yes - acionando o relé) e o botão **"Desligar"** transmite o caractere `'N'` (No).
 
 ---
 
-## Demonstração
+###  Monitoramento em Tempo Real
 
-### Sistema Montado
+O aplicativo possui uma rotina de buffer serial que recebe e trata as strings enviadas pela STM32.
+
+Ele busca especificamente pelo identificador **"Corrente:"**, faz o fatiamento da string (*split*) e exibe o consumo em miliamperes (**mA**) no painel central.
+
+---
+
+###  Sistema de Segurança (Timeout)
+
+O app monitora ativamente a comunicação.
+
+Caso a placa pare de enviar os dados por mais de **2.5 segundos**, o aplicativo acusa **"Conexão Perdida"** e zera a exibição, prevenindo que o usuário visualize leituras obsoletas.
+
+---
+
+#  Guia de Instalação e Uso
+
+1. Instale o arquivo executável `.apk` no seu smartphone Android.
+
+2. Nas configurações de Bluetooth do celular, realize o pareamento prévio com o módulo HC-05 (a senha padrão de fábrica geralmente é **1234** ou **0000**).
+
+3. Abra o aplicativo, clique no botão de seleção Bluetooth e escolha o módulo na lista de dispositivos pareados.
+
+4. Aguarde a validação do endereço MAC e o status de **"Conectado"** para iniciar a operação.
+
+---
+
+#  Demonstração
+
+##  Sistema Montado
 
 ![Montagem](imagens/montagem.jpg)
 
-### Funcionamento
+> *(Adicione aqui a foto da sua montagem física.)*
+
+---
+
+##  Interface do Aplicativo
+
+> *(Adicione aqui o print da tela do seu aplicativo.)*
+
+---
+
+##  Funcionamento (GIF)
 
 ![Funcionamento](imagens/funcionamento.gif)
 
+> *(Se possível, adicione um GIF curto mostrando o valor mudando ao ligar a carga.)*
+
 ---
 
-##  Referências Documentais
+#  Referências Documentais
 
 Para garantir o rigor técnico do código em Bare-Metal, as configurações basearam-se nas seguintes documentações oficiais da fabricante:
-* [Reference Manual RM0008 (STMicroelectronics)](https://www.st.com/resource/en/reference_manual/rm0008-stm32f101xx-stm32f102xx-stm32f103xx-stm32f105xx-and-stm32f107xx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf): Mapeamento dos registradores de Clock (RCC), GPIO (CRL/CRH, BSRR) e USART (CR1, DR).
-* Datasheet Técnico do Módulo Bluetooth HC-05.
-* Datasheet do Relé Eletromecânico Songle SRD-05VDC-SL-C.
+
+- [Reference Manual RM0008 (STMicroelectronics)](https://www.st.com/resource/en/reference_manual/rm0008-stm32f101xx-stm32f102xx-stm32f103xx-stm32f105xx-and-stm32f107xx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf): Mapeamento dos registradores de Clock (RCC), GPIO (CRL/CRH, BSRR) e USART (CR1, DR).
+
+- Datasheet Técnico do Módulo Bluetooth HC-05.
+
+- Datasheet do Relé Eletromecânico Songle SRD-05VDC-SL-C.
 
 ---
 
-##  Equipe Desenvolvedora
+# 👥 Equipe Desenvolvedora
+
 Desenvolvido com dedicação por:
-* [Ana Alicy Ribeiro](https://github.com/AlicyRibeiro)
-* [Ana Amélia](https://github.com/ameliasants)
-* [Cícero Rodrigues](https://github.com/Icxxz)
+
+| Integrante | GitHub |
+|------------|--------|
+| **Ana Alicy Ribeiro** | https://github.com/AlicyRibeiro |
+| **Ana Amélia** | https://github.com/ameliasants |
+| **Cícero Rodrigues** | https://github.com/Icxxz |
+
+---
+
+<div align="center">
+
+**Projeto desenvolvido para a disciplina de Microcontroladores**
+
+**Universidade Federal do Ceará (UFC) – Campus Quixadá**
+
+</div>
