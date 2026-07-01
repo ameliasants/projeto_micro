@@ -6,7 +6,7 @@ O objetivo do projeto é controlar o acionamento de um motor DC  remotamente atr
 
 ---
 
-## Estrutura do Repositório (Metodologia)
+## Estrutura do Repositório
 
 O desenvolvimento seguiu a prática de **Prototipagem Rápida (PoC)**, dividindo o fluxo de trabalho em duas etapas claras:
 
@@ -70,9 +70,33 @@ A lógica de controle foi desenhada para ser estritamente **não-bloqueante** e 
 
 ---
 
-##  Guia de Configuração do Celular
+## Aplicativo de Controle e Monitoramento (Dashboard)
 
-Adcionar após finalização da aplicação
+Para a interação com o sistema, foi desenvolvido um aplicativo Android customizado utilizando a plataforma MIT App Inventor. A interface foi projetada com foco em usabilidade e clareza visual (estilo Dark Mode), atuando como um painel de controle industrial para operação remota.
+
+- Funcionalidades da Interface
+- Controle de Atuação: Botões dedicados para envio de comandos seriais. O botão "Ligar" transmite o caractere 'Y' (Yes - acionando o relé) e o botão "Desligar" transmite o caractere 'N' (No).
+- Monitoramento em Tempo Real: O aplicativo possui uma rotina de buffer serial que recebe e trata as strings enviadas pela STM32. Ele busca especificamente pelo identificador "Corrente:", faz o fatiamento da string (split) e exibe o consumo em miliamperes (mA) no painel central.
+- Sistema de Segurança (Timeout): O app monitora ativamente a comunicação. Caso a placa pare de enviar os dados por mais de 2.5 segundos, o aplicativo acusa "Conexão Perdida" e zera a exibição, prevenindo que o usuário visualize leituras obsoletas.
+
+Guia de Instalação e Uso
+1. Instale o arquivo executável .apk no seu smartphone Android.
+2. Nas configurações de Bluetooth do celular, realize o pareamento prévio com o módulo HC-05 (a senha padrão de fábrica geralmente é 1234 ou 0000).
+3. Abra o aplicativo, clique no botão de seleção Bluetooth e escolha o módulo na lista de dispositivos pareados.
+4. Aguarde a validação do endereço MAC e o status de "Conectado" para iniciar a operação.
+
+
+Demonstração
+Sistema Montado
+
+(Adicione aqui a foto da sua montagem física)
+Interface do Aplicativo
+
+(Adicione aqui o print da tela do seu App)
+Funcionamento (GIF)
+
+(Se possível, adicione um GIF curto mostrando o valor mudando ao ligar a carga)
+
 
 ---
 
