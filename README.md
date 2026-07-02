@@ -27,6 +27,8 @@ A dependência da biblioteca HAL foi removida. O acionamento, o temporizador (Sy
 ### `Documentos/`
 
 ### `imagens/`
+
+
 ---
 
 ##  Documentação do Projeto
