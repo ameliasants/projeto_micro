@@ -22,18 +22,11 @@ Versão oficial e definitiva de entrega.
 
 A dependência da biblioteca HAL foi removida. O acionamento, o temporizador (SysTick) e a leitura serial operam **100% via Bare-Metal**, manipulando diretamente os registradores para atingir a máxima performance exigida pela arquitetura ARM Cortex-M.
 
-```text
-2_Projeto_Final/
-├── Core/
-├── Drivers/
-├── Relatorio/
-│   └── Relatorio_Final.pdf
-├── Documentos/
-│   ├── Projeto_esquematico.pdf
-│   └── Projeto_esquematico.png
-└── README.md
-```
+### `Relatorio/`
 
+### `Documentos/`
+
+### `imagens/`
 ---
 
 ##  Documentação do Projeto
