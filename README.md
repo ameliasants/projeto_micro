@@ -151,15 +151,14 @@ Caso a placa pare de enviar os dados por mais de **2.5 segundos**, o aplicativo 
 
 ##  Sistema Montado
 
-![Montagem](imagens/montagem.jpg)
+![Montagem](imagens/conexoes.jpeg)
 
-> *(Adicione aqui a foto da sua montagem física.)*
 
 ---
 
 ##  Interface do Aplicativo
 
-> *(Adicione aqui o print da tela do seu aplicativo.)*
+![Interface](imagens/Screenshot.png)
 
 ---
 
